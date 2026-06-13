@@ -1,0 +1,28 @@
+name: Deploy to Production via FTP
+
+on:
+  push:
+    branches: [ main, master ] # Se ejecutará al hacer push a main o master
+
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get latest code
+      uses: actions/checkout@v3
+      
+    - name: Sync files
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        # Si usas cPanel cambia /htdocs/ por /public_html/
+        server-dir: /htdocs/ 
+        exclude: |
+          **/.git*
+          **/.git*/**
+          api/db/** 
+          **/*.md
+          scratch/**
